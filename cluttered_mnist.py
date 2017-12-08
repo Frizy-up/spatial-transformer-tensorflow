@@ -17,6 +17,9 @@ from spatial_transformer import transformer
 import numpy as np
 from tf_utils import weight_variable, bias_variable, dense_to_one_hot
 
+from PIL import Image
+from scipy import misc
+
 # %% Load data
 mnist_cluttered = np.load('./data/mnist_sequence1_sample_5distortions5x5.npz')
 
@@ -123,7 +126,7 @@ y_logits = tf.matmul(h_fc1_drop, W_fc2) + b_fc2
 
 # %% Define loss/eval/training functions
 cross_entropy = tf.reduce_mean(
-    tf.nn.softmax_cross_entropy_with_logits(y_logits, y))
+    tf.nn.softmax_cross_entropy_with_logits(logits = y_logits, labels = y))
 opt = tf.train.AdamOptimizer()
 optimizer = opt.minimize(cross_entropy)
 grads = opt.compute_gradients(cross_entropy, [b_fc_loc2])
@@ -147,9 +150,21 @@ indices = np.linspace(0, 10000 - 1, iter_per_epoch)
 indices = indices.astype('int')
 
 for epoch_i in range(n_epochs):
+
+
     for iter_i in range(iter_per_epoch - 1):
         batch_xs = X_train[indices[iter_i]:indices[iter_i+1]]
         batch_ys = Y_train[indices[iter_i]:indices[iter_i+1]]
+
+
+        # if iter_i == 0:
+        theta, resultImageBatch = sess.run([h_fc_loc2, h_trans], feed_dict={x: batch_xs, keep_prob: 1.0})
+        print(theta[0])
+        resultImage = resultImageBatch[15]
+        image = resultImage[:, :, 0]
+        stringName = 'data/result_' + str(epoch_i) + '_' +str(iter_i) + '.png'
+        misc.toimage(image).save(stringName)
+
 
         if iter_i % 10 == 0:
             loss = sess.run(cross_entropy,
@@ -169,6 +184,4 @@ for epoch_i in range(n_epochs):
                                                          y: Y_valid,
                                                          keep_prob: 1.0
                                                      })))
-    # theta = sess.run(h_fc_loc2, feed_dict={
-    #        x: batch_xs, keep_prob: 1.0})
-    # print(theta[0])
+
