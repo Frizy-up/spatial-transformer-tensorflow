@@ -158,12 +158,12 @@ for epoch_i in range(n_epochs):
 
 
         # if iter_i == 0:
-        theta, resultImageBatch = sess.run([h_fc_loc2, h_trans], feed_dict={x: batch_xs, keep_prob: 1.0})
-        print(theta[0])
-        resultImage = resultImageBatch[15]
-        image = resultImage[:, :, 0]
-        stringName = 'data/result_' + str(epoch_i) + '_' +str(iter_i) + '.png'
-        misc.toimage(image).save(stringName)
+        # theta, resultImageBatch = sess.run([h_fc_loc2, h_trans], feed_dict={x: batch_xs, keep_prob: 1.0})
+        # print(theta[0])
+        # resultImage = resultImageBatch[15]
+        # image = resultImage[:, :, 0]
+        # stringName = 'data/result_' + str(epoch_i) + '_' +str(iter_i) + '.png'
+        # misc.toimage(image).save(stringName)
 
 
         if iter_i % 10 == 0:
@@ -185,3 +185,9 @@ for epoch_i in range(n_epochs):
                                                          keep_prob: 1.0
                                                      })))
 
+    theta, resultImageBatch = sess.run([h_fc_loc2, h_trans], feed_dict={x: batch_xs, keep_prob: 1.0})
+    print(theta[0])
+    resultImage = resultImageBatch[15]
+    image = resultImage[:, :, 0]
+    stringName = 'data/result_' + str(epoch_i) + '.png'
+    misc.toimage(image).save(stringName)
